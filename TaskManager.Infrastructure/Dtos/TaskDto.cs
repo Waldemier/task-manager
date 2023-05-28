@@ -1,3 +1,3 @@
 namespace TaskManager.Infrastructure.Dtos;
 
-public record TaskDto() : DtoBase;
+public record TaskDto(Guid Id, string Name, string Description, UserDto Owner, ICollection<UserDto> Assignees) : DtoBase;

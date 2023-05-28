@@ -1,43 +1,60 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TaskManager.Business.Interfaces.Interfaces;
+using TaskManager.Business.Services.Abstractions;
+using TaskManager.Core.UnitOfWork;
 using TaskManager.Infrastructure.Dtos;
+using TaskManager.Infrastructure.Entities;
+using TaskManager.Infrastructure.Exceptions;
 using TaskManager.Infrastructure.Models;
+using TaskManager.Infrastructure.Models.Users;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskManager.Business.Services;
 
-internal sealed class UserService : IUserService
+internal sealed class UserService : ServiceBase, IUserService
 {
-    public UserService()
+    private readonly IMapper _mapper;
+    
+    public UserService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
     {
-        
+        _mapper = mapper;
     }
     
-    public Task CreateAsync(CreateUserModel entity, CancellationToken cancellationToken = default)
+    public async Task CreateUserAsync(CreateUserModel model, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var user = _mapper.Map<User>(model);
+        await UnitOfWork.UserRepository.Value.CreateAsync(user, cancellationToken);
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public Task UpdateAsync<TModel>(TModel entity, CancellationToken cancellationToken = default) where TModel : ModelBase, new()
+    public async Task UpdateUserAsync(UpdateUserModel model, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var user = UnitOfWork.UserRepository.Value.GetEntityAsync(model.Id, cancellationToken);
+        if (user is null)
+            throw new ContextException($"User with {model.Id} is not found");
+        await _mapper.Map(model, user);
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public Task DeleteAsync<TModel>(TModel entity, CancellationToken cancellationToken = default) where TModel : ModelBase, new()
+    public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await UnitOfWork.UserRepository.Value.DeleteAsync(id, cancellationToken);
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<UserDto> GetUserAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var user = await UnitOfWork.UserRepository.Value.GetEntityAsync(id, cancellationToken);
+        var mapped = _mapper.Map<UserDto>(user);
+        return mapped;
     }
 
-    public Task<TResult?> GetEntityAsync<TResult>(Guid id, CancellationToken cancellationToken = default) where TResult : DtoBase, new()
+    public async Task<IEnumerable<UserDto>> GetUsersAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<TResult> GetEntitiesAsync<TResult>(IEnumerable<Guid> ids, CancellationToken cancellationToken = default) where TResult : DtoBase, new()
-    {
-        throw new NotImplementedException();
+        var users = await UnitOfWork.UserRepository.Value
+            .Get(x => true, s => s, cancellationToken)
+            .ToListAsync(cancellationToken);
+        return users.Select(u => _mapper.Map<UserDto>(u));
     }
 }

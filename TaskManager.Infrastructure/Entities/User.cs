@@ -35,7 +35,7 @@ public class User : EntityBase
 
     protected override void Validate()
     {
-        Guard.For(() => Regex.IsMatch(Email, "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"),
+        Guard.For(() => Regex.IsMatch(Email, "/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/g"),
             new ArgumentException($"{nameof(Email)} is not valid"));
         Guard.NotGreaterThan(FullName.Length, MaxFullNameLength, 
             new ArgumentException($"{nameof(FullName)} is greater than {MaxFullNameLength} characters"));

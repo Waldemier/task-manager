@@ -3,7 +3,4 @@ using TaskManager.Infrastructure.Dtos;
 
 namespace TaskManager.Application.Queries.Users;
 
-public class GetUsersQuery : IRequest<IEnumerable<TaskDto>>
-{
-    
-}
+public record GetUsersQuery : IRequest<IEnumerable<UserDto>>;

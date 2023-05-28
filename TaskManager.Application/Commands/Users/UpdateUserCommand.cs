@@ -2,7 +2,4 @@ using MediatR;
 
 namespace TaskManager.Application.Commands.Users;
 
-public class UpdateUserCommand : IRequest
-{
-    
-}
+public record UpdateUserCommand(Guid Id, string NickName, string FullName, string Email) : IRequest;

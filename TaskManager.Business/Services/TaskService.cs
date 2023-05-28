@@ -1,42 +1,42 @@
+using AutoMapper;
 using TaskManager.Business.Interfaces.Interfaces;
+using TaskManager.Business.Services.Abstractions;
+using TaskManager.Core.UnitOfWork;
 using TaskManager.Infrastructure.Dtos;
-using TaskManager.Infrastructure.Models;
+using TaskManager.Infrastructure.Models.Tasks;
 
 namespace TaskManager.Business.Services;
 
-internal sealed class TaskService : ITaskService
+internal sealed class TaskService : ServiceBase, ITaskService
 {
-    public TaskService()
-    {
-        
-    }
+    private readonly IMapper _mapper;
     
-    public Task CreateAsync<TModel>(TModel entity, CancellationToken cancellationToken = default) where TModel : ModelBase, new()
+    public TaskService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
+    {
+        _mapper = mapper;
+    }
+
+    public Task CreateTaskAsync(CreateTaskModel model, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync<TModel>(TModel entity, CancellationToken cancellationToken = default) where TModel : ModelBase, new()
+    public Task UpdateTaskAsync(UpdateTaskModel model, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync<TModel>(TModel entity, CancellationToken cancellationToken = default) where TModel : ModelBase, new()
+    public Task DeleteTaskAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<TaskDto> GetTaskAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<TResult?> GetEntityAsync<TResult>(Guid id, CancellationToken cancellationToken = default) where TResult : DtoBase, new()
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<TResult> GetEntitiesAsync<TResult>(IEnumerable<Guid> ids, CancellationToken cancellationToken = default) where TResult : DtoBase, new()
+    public Task<IEnumerable<TaskDto>> GetTasksAsync(CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
