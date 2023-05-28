@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace TaskManager.Presentation.Middlewares;
 
 internal sealed class CatchErrorMiddleware : IMiddleware
@@ -18,6 +20,7 @@ internal sealed class CatchErrorMiddleware : IMiddleware
         catch (Exception ex)
         {
             _logger.LogError($"There is an exception in a domain has been thrown: {ex.Message}");
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             await context.Response.WriteAsync($"An exception has been thrown in a {context.Request.Method} operation");
         }
     }
