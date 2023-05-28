@@ -1,5 +1,8 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TaskManager.Application.Commands.Users;
 using TaskManager.Infrastructure.Entities;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskManager.Presentation.Controllers;
 
@@ -7,15 +10,19 @@ namespace TaskManager.Presentation.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
+    private readonly IMediator _mediator;
 
-    public UserController(ILogger<UserController> logger)
+    public UserController(ILogger<UserController> logger, IMediator mediator)
     {
-        _logger = logger;
+        _mediator = mediator;
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<User>> GetUser([FromRoute] Guid id, CancellationToken cancellationToken) =>
+    public ActionResult<User> GetUser([FromRoute] Guid id, CancellationToken cancellationToken) =>
         new User();
     //await _repository.GetEntityAsync(id, cancellationToken);
+    
+    [HttpPost]
+    public async Task CreateUser([FromBody] CreateUserCommand command, CancellationToken cancellationToken) =>
+        await _mediator.Send(command, cancellationToken);
 }
