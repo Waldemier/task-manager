@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using TaskManager.Infrastructure.Database;
 using TaskManager.Infrastructure.Entities;
 using TaskManager.Infrastructure.Repositories.Interfaces;
-using Task = TaskManager.Infrastructure.Entities.Task;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskManager.Infrastructure.Repositories.Implementations;
 
@@ -14,39 +15,31 @@ internal sealed class UserRepository : IUserRepository
     {
         _dbContext = dbContext;
     }
-    
-    public Task CreateAsync(User entity, CancellationToken cancellationToken)
+
+    public async Task CreateAsync(User entity, CancellationToken cancellationToken) =>
+        await _dbContext.Users.AddAsync(entity, cancellationToken);
+
+    public async Task UpdateAsync(User entity, CancellationToken cancellationToken) =>
+        await Task.Run(() => _dbContext.Users.Update(entity), cancellationToken);
+
+    public async Task DeleteAsync(User entity, CancellationToken cancellationToken) =>
+        await Task.Run(() => _dbContext.Users.Remove(entity), cancellationToken);
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var entity = await GetEntityAsync(id, cancellationToken);
+        
+        if (entity != null)
+            await Task.Run(() => _dbContext.Users.Remove(entity), cancellationToken);
     }
 
-    public Task UpdateAsync(User entity, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<User?> GetEntityAsync(Guid id, CancellationToken cancellationToken) =>
+        await _dbContext.Users.Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
 
-    public Task DeleteAsync(User entity, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public IQueryable<User> GetEntitiesAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken) =>
+        _dbContext.Users.Where(x => ids.Contains(x.Id));
 
-    public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<User> GetEntityAsync(Guid id, CancellationToken cancellationToken)
-    {
-        return System.Threading.Tasks.Task.FromResult(new User("test-nickname-1", "test-name-1", "test@gmail.com"));
-    }
-
-    public Task<IQueryable<User>> GetEntitiesAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IQueryable<User>> Get(Expression<Func<User, bool>> expression, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public IQueryable<User> Get(Expression<Func<User, bool>> expression, 
+        Expression<Func<User, User>> selector, CancellationToken cancellationToken) =>
+        _dbContext.Users.Select(selector).Where(expression);
 }
