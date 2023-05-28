@@ -17,7 +17,7 @@ public class User : EntityBase
     public ICollection<Task> OwnTasks { get; set; }
     public ICollection<Task> AssignedTasks { get; set; }
 
-    public User()
+    public User(): base()
     {
         OwnTasks = new List<Task>();
         AssignedTasks = new List<Task>();
@@ -30,6 +30,7 @@ public class User : EntityBase
         Email = email;
         OwnTasks = new List<Task>();
         AssignedTasks = new List<Task>();
+        Validate();
     }
 
     protected override void Validate()

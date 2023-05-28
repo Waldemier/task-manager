@@ -9,7 +9,6 @@ public abstract class EntityBase
     {
         Id = Guid.NewGuid();
         CreationDate = DateTime.UtcNow;
-        Validate();
     }
 
     protected abstract void Validate();

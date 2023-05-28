@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TaskManager.Business.Interfaces\TaskManager.Business.Interfaces.csproj" />
       <ProjectReference Include="..\TaskManager.Infrastructure\TaskManager.Infrastructure.csproj" />
     </ItemGroup>
 

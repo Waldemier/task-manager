@@ -8,7 +8,7 @@ public static class Dependencies
     {
         services.AddMediatR(configuration => 
             configuration.RegisterServicesFromAssembly(typeof(Dependencies).Assembly));
-        
+
         return services;
     }
 }

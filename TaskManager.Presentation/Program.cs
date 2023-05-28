@@ -1,5 +1,7 @@
 using TaskManager.Application;
+using TaskManager.Business.Interfaces;
 using TaskManager.Infrastructure;
+using TaskManager.Presentation.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +12,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.RegisterCustomMiddlewares();
+
 builder.Services
     .RegisterInfrastructure(builder.Configuration)
     .RegisterApplication()
+    .RegisterServices()
     .MigrateDatabase();
 
 var app = builder.Build();
@@ -27,6 +32,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCatchErrorMiddleware();
 
 app.MapControllers();
 

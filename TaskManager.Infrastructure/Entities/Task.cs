@@ -13,7 +13,7 @@ public class Task : EntityBase
     public User Owner { get; set; }
     public ICollection<User> Assignees { get; set; }
 
-    public Task()
+    public Task(): base()
     {
         Assignees = new List<User>();
     }
@@ -24,6 +24,7 @@ public class Task : EntityBase
         Description = description;
         Owner = owner;
         Assignees = assignees ?? new List<User>();
+        Validate();
     }
     
     public Task(string name, string description, Guid ownerId, ICollection<User>? assignees = null): base()
@@ -32,6 +33,7 @@ public class Task : EntityBase
         Description = description;
         OwnerId = ownerId;
         Assignees = assignees ?? new List<User>();
+        Validate();
     }
 
     protected override void Validate()
