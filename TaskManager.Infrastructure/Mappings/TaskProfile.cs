@@ -13,6 +13,7 @@ internal sealed class TaskProfile : Profile
         CreateMap<CreateTaskModel, Task>();
         CreateMap<UpdateTaskModel, Task>()
             .ForMember(d => d.OwnerId, 
-                op => op.Ignore());
+                op => op.Ignore())
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

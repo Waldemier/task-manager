@@ -1,5 +1,4 @@
 using TaskManager.Infrastructure.Dtos;
-using TaskManager.Infrastructure.Models;
 using TaskManager.Infrastructure.Models.Users;
 
 namespace TaskManager.Business.Interfaces.Interfaces;

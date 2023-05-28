@@ -1,7 +1,6 @@
 using AutoMapper;
 using TaskManager.Infrastructure.Dtos;
 using TaskManager.Infrastructure.Entities;
-using TaskManager.Infrastructure.Models;
 using TaskManager.Infrastructure.Models.Users;
 
 namespace TaskManager.Infrastructure.Mappings;
@@ -12,6 +11,7 @@ internal sealed class UserProfile : Profile
     {
         CreateMap<User, UserDto>();
         CreateMap<CreateUserModel, User>();
-        CreateMap<UpdateUserModel, User>();
+        CreateMap<UpdateUserModel, User>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));;
     }
 }

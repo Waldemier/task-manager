@@ -6,7 +6,6 @@ using TaskManager.Core.UnitOfWork;
 using TaskManager.Infrastructure.Dtos;
 using TaskManager.Infrastructure.Entities;
 using TaskManager.Infrastructure.Exceptions;
-using TaskManager.Infrastructure.Models;
 using TaskManager.Infrastructure.Models.Users;
 using Task = System.Threading.Tasks.Task;
 
@@ -30,10 +29,11 @@ internal sealed class UserService : ServiceBase, IUserService
 
     public async Task UpdateUserAsync(UpdateUserModel model, CancellationToken cancellationToken = default)
     {
-        var user = UnitOfWork.UserRepository.Value.GetEntityAsync(model.Id, cancellationToken);
+        var user = await UnitOfWork.UserRepository.Value.GetEntityAsync(model.Id, cancellationToken);
         if (user is null)
             throw new ContextException($"User with {model.Id} is not found");
-        await _mapper.Map(model, user);
+        _mapper.Map(model, user);
+        await UnitOfWork.UserRepository.Value.UpdateAsync(user, cancellationToken);
         await UnitOfWork.SaveChangesAsync(cancellationToken);
     }
 

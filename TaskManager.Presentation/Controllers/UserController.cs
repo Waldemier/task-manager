@@ -35,6 +35,6 @@ public class UserController : ControllerBase
         await _mediator.Send(command, cancellationToken);
     
     [HttpDelete("{id:guid}")]
-    public async Task DeleteUser([FromBody] Guid id, CancellationToken cancellationToken) =>
+    public async Task DeleteUser([FromRoute] Guid id, CancellationToken cancellationToken) =>
         await _mediator.Send(new DeleteUserCommand(id), cancellationToken);
 }

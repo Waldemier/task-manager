@@ -19,7 +19,7 @@ internal static class Dependencies
     {
         services.AddDbContext<ITaskManagerDbContext, TaskManagerDbContext>(options =>
             options.UseMySql(configuration.GetConnectionString("TaskManagerDbContextSettings"), new MySqlServerVersion("8.0"), options => 
-                options.MigrationsAssembly(typeof(Dependencies).Assembly.FullName)));
+                options.MigrationsAssembly(typeof(Dependencies).Assembly.FullName)), ServiceLifetime.Scoped);
         
         return services;
     }
