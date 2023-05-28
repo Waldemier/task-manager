@@ -1,6 +1,6 @@
 using TaskManager.Infrastructure.Entities;
 
-namespace TaskManager.Infrastructure.Repositories.Interfaces;
+namespace TaskManager.Core.Repositories.Interfaces;
 
 public interface IUserRepository : IRepositoryBase<User>
 {

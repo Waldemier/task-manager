@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Infrastructure.Entities;
-using TaskManager.Infrastructure.Repositories.Interfaces;
 
 namespace TaskManager.Presentation.Controllers;
 
@@ -9,15 +8,14 @@ namespace TaskManager.Presentation.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-    private readonly IUserRepository _repository;
 
-    public UserController(ILogger<UserController> logger, IUserRepository repository)
+    public UserController(ILogger<UserController> logger)
     {
         _logger = logger;
-        _repository = repository;
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<User>> GetUser([FromRoute] Guid id, CancellationToken cancellationToken) =>
-        await _repository.GetEntityAsync(id, cancellationToken);
+        new User();
+    //await _repository.GetEntityAsync(id, cancellationToken);
 }

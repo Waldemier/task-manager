@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using TaskManager.Infrastructure.Entities;
 using Task = System.Threading.Tasks.Task;
 
-namespace TaskManager.Infrastructure.Repositories.Interfaces;
+namespace TaskManager.Core.Repositories.Interfaces;
 
 public interface IRepositoryBase<T> where T: EntityBase
 {

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManager.Infrastructure.Entities;
 using Task = TaskManager.Infrastructure.Entities.Task;
 
-namespace TaskManager.Infrastructure.Database;
+namespace TaskManager.Core.Database;
 
 internal class TaskManagerDbContext : DbContext, ITaskManagerDbContext
 {
@@ -14,6 +14,9 @@ internal class TaskManagerDbContext : DbContext, ITaskManagerDbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Task> Tasks { get; set; }
 
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        await base.SaveChangesAsync(cancellationToken);
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -1,11 +1,11 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Infrastructure.Database;
+using TaskManager.Core.Database;
+using TaskManager.Core.Repositories.Interfaces;
 using TaskManager.Infrastructure.Entities;
-using TaskManager.Infrastructure.Repositories.Interfaces;
 using Task = System.Threading.Tasks.Task;
 
-namespace TaskManager.Infrastructure.Repositories.Implementations;
+namespace TaskManager.Core.Repositories.Implementations;
 
 internal sealed class UserRepository : IUserRepository
 {

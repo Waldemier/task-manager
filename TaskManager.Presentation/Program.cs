@@ -1,5 +1,4 @@
 using TaskManager.Application;
-using TaskManager.Business.Interfaces;
 using TaskManager.Infrastructure;
 using TaskManager.Presentation.Middlewares;
 
@@ -15,10 +14,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.RegisterCustomMiddlewares();
 
 builder.Services
-    .RegisterInfrastructure(builder.Configuration)
-    .RegisterApplication()
-    //.RegisterServices()
-    .MigrateDatabase();
+    .RegisterInfrastructure()
+    .RegisterContext(builder.Configuration)
+    .MigrateDatabase()
+    .RegisterRepositories()
+    .RegisterServices()
+    .RegisterApplication();
 
 var app = builder.Build();
 

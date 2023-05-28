@@ -1,10 +1,10 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Infrastructure.Database;
-using TaskManager.Infrastructure.Repositories.Interfaces;
+using TaskManager.Core.Database;
+using TaskManager.Core.Repositories.Interfaces;
 using TaskModel = TaskManager.Infrastructure.Entities.Task;
 
-namespace TaskManager.Infrastructure.Repositories.Implementations;
+namespace TaskManager.Core.Repositories.Implementations;
 
 internal sealed class TaskRepository : ITaskRepository
 {
