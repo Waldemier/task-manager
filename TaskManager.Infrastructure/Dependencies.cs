@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskManager.Infrastructure.Database;
+using TaskManager.Infrastructure.Repositories.Implementations;
+using TaskManager.Infrastructure.Repositories.Interfaces;
 
 namespace TaskManager.Infrastructure;
 
@@ -14,6 +16,9 @@ public static class Dependencies
         services.AddDbContext<ITaskManagerDbContext, TaskManagerDbContext>(options =>
             options.UseMySql(configuration.GetConnectionString("TaskManagerDbContextSettings"), new MySqlServerVersion("8.0"), options => 
                 options.MigrationsAssembly(typeof(Dependencies).Assembly.FullName)));
+
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITaskRepository, TaskRepository>();
         
         return services;
     }

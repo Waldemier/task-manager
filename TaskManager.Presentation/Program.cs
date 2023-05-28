@@ -17,7 +17,7 @@ builder.Services.RegisterCustomMiddlewares();
 builder.Services
     .RegisterInfrastructure(builder.Configuration)
     .RegisterApplication()
-    .RegisterServices()
+    //.RegisterServices()
     .MigrateDatabase();
 
 var app = builder.Build();

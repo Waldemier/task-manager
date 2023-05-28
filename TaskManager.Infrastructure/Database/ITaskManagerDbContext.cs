@@ -4,7 +4,7 @@ using Task = TaskManager.Infrastructure.Entities.Task;
 
 namespace TaskManager.Infrastructure.Database;
 
-public interface ITaskManagerDbContext
+internal interface ITaskManagerDbContext
 {
     DbSet<User> Users { get; set; }
     DbSet<Task> Tasks { get; set; }

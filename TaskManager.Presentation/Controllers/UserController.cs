@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using TaskManager.Business.Interfaces.Interfaces;
 using TaskManager.Infrastructure.Entities;
-using Task = TaskManager.Infrastructure.Entities.Task;
+using TaskManager.Infrastructure.Repositories.Interfaces;
 
 namespace TaskManager.Presentation.Controllers;
 

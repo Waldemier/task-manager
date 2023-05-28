@@ -1,6 +1,6 @@
 using Task = TaskManager.Infrastructure.Entities.Task;
 
-namespace TaskManager.Business.Interfaces.Interfaces;
+namespace TaskManager.Infrastructure.Repositories.Interfaces;
 
 public interface ITaskRepository : IRepositoryBase<Task>
 {

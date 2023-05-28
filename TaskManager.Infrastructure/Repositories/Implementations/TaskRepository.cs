@@ -1,11 +1,11 @@
 using System.Linq.Expressions;
-using TaskManager.Business.Interfaces.Interfaces;
 using TaskManager.Infrastructure.Database;
+using TaskManager.Infrastructure.Repositories.Interfaces;
 using Task = TaskManager.Infrastructure.Entities.Task;
 
-namespace TaskManager.Business.Services;
+namespace TaskManager.Infrastructure.Repositories.Implementations;
 
-internal class TaskRepository : ITaskRepository
+internal sealed class TaskRepository : ITaskRepository
 {
     private readonly ITaskManagerDbContext _dbContext;
 
