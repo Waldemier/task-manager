@@ -17,7 +17,7 @@ public class User : EntityBase
     public ICollection<Task> OwnTasks { get; set; }
     public ICollection<Task> AssignedTasks { get; set; }
 
-    public User(): base()
+    protected User(): base()
     {
         OwnTasks = new List<Task>();
         AssignedTasks = new List<Task>();

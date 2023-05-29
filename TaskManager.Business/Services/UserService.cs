@@ -53,7 +53,7 @@ internal sealed class UserService : ServiceBase, IUserService
     public async Task<IEnumerable<UserDto>> GetUsersAsync(CancellationToken cancellationToken = default)
     {
         var users = await UnitOfWork.UserRepository.Value
-            .Get(x => true, s => s, cancellationToken)
+            .Get(x => true, s => s)
             .ToListAsync(cancellationToken);
         return users.Select(u => _mapper.Map<UserDto>(u));
     }

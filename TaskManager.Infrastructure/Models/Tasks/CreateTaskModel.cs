@@ -1,3 +1,3 @@
 namespace TaskManager.Infrastructure.Models.Tasks;
 
-public record CreateTaskModel(Guid OwnerId, string Name, string Description) : ModelBase;
+public record CreateTaskModel(string Name, string Description, Guid OwnerId) : ModelBase;

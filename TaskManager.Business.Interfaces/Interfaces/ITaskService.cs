@@ -9,5 +9,5 @@ public interface ITaskService : IServiceBase
     Task UpdateTaskAsync(UpdateTaskModel model, CancellationToken cancellationToken = default);
     Task DeleteTaskAsync(Guid id, Guid userId, CancellationToken cancellationToken = default);
     Task<TaskDto> GetTaskAsync(Guid id, Guid userId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<TaskDto>> GetTasksAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<TaskDto>> GetTasksAsync(Guid userId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 }

@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Core.Database;
 using TaskManager.Core.Repositories.Interfaces;
-using TaskModel = TaskManager.Infrastructure.Entities.Task;
+using TaskEntity = TaskManager.Infrastructure.Entities.Task;
 
 namespace TaskManager.Core.Repositories.Implementations;
 
@@ -15,13 +15,13 @@ internal sealed class TaskRepository : ITaskRepository
         _dbContext = dbContext;
     }
     
-    public async Task CreateAsync(TaskModel entity, CancellationToken cancellationToken) =>
+    public async Task CreateAsync(TaskEntity entity, CancellationToken cancellationToken) =>
         await _dbContext.Tasks.AddAsync(entity, cancellationToken);
 
-    public async Task UpdateAsync(TaskModel entity, CancellationToken cancellationToken) =>
+    public async Task UpdateAsync(TaskEntity entity, CancellationToken cancellationToken) =>
         await Task.Run(() => _dbContext.Tasks.Update(entity), cancellationToken);
 
-    public async Task DeleteAsync(TaskModel entity, CancellationToken cancellationToken) =>
+    public async Task DeleteAsync(TaskEntity entity, CancellationToken cancellationToken) =>
         await Task.Run(() => _dbContext.Tasks.Remove(entity), cancellationToken);
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
@@ -32,13 +32,19 @@ internal sealed class TaskRepository : ITaskRepository
             await Task.Run(() => _dbContext.Tasks.Remove(entity), cancellationToken);
     }
 
-    public async Task<TaskModel?> GetEntityAsync(Guid id, CancellationToken cancellationToken) =>
+    public async Task<TaskEntity?> GetEntityAsync(Guid id, CancellationToken cancellationToken) =>
         await _dbContext.Tasks.Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
 
-    public IQueryable<TaskModel> GetEntitiesAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken) =>
+    public IQueryable<TaskEntity> GetEntitiesAsync(IEnumerable<Guid> ids) =>
         _dbContext.Tasks.Where(x => ids.Contains(x.Id));
 
-    public IQueryable<TaskModel> Get(Expression<Func<TaskModel, bool>> expression, 
-        Expression<Func<TaskModel, TaskModel>> selector, CancellationToken cancellationToken) =>
+    public IQueryable<TaskEntity> Get(Expression<Func<TaskEntity, bool>> expression, Expression<Func<TaskEntity, TaskEntity>> selector) =>
         _dbContext.Tasks.Select(selector).Where(expression);
+
+    public async Task LoadNavigationPropertyExplicitly<TProperty>(TaskEntity entity,
+        Expression<Func<TaskEntity, TProperty>> relation, CancellationToken cancellationToken = default) where TProperty: class =>
+        await _dbContext.Tasks.Entry(entity).Reference(relation!).LoadAsync(cancellationToken);
+    public async Task LoadNavigationCollectionExplicitly<TProperty>(TaskEntity entity, Expression<Func<TaskEntity, IEnumerable<TProperty>>> relation, 
+        CancellationToken cancellationToken = default) where TProperty: class =>
+        await _dbContext.Tasks.Entry(entity).Collection(relation!).LoadAsync(cancellationToken);
 }

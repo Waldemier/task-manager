@@ -13,7 +13,7 @@ public class Task : EntityBase
     public User Owner { get; set; }
     public ICollection<User> Assignees { get; set; }
 
-    public Task(): base()
+    protected Task(): base()
     {
         Assignees = new List<User>();
     }
