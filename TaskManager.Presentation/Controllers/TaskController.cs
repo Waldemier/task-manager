@@ -6,7 +6,6 @@ using TaskManager.Infrastructure.Dtos;
 
 namespace TaskManager.Presentation.Controllers;
 
-// TODO: Add Annotations
 [ApiController]
 [Route("api/users/{userId:guid}/tasks")]
 public class TaskController : ControllerBase
@@ -17,6 +16,8 @@ public class TaskController : ControllerBase
     {
         _mediator = mediator;
     }
+
+    #region Tasks
 
     [HttpGet]
     public async Task<IEnumerable<TaskDto>> GetTasks([FromRoute] Guid userId, [FromQuery] int pageNumber, 
@@ -46,4 +47,22 @@ public class TaskController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task DeleteTask([FromRoute] Guid userId, [FromRoute] Guid id, CancellationToken cancellationToken) =>
         await _mediator.Send(new DeleteTaskCommand(userId, id), cancellationToken);
+
+    #endregion
+
+    #region Assignees
+
+    [HttpGet("{id:guid}/assignees")]
+    public async Task<IEnumerable<UserDto>> GetAssignees([FromRoute] Guid userId, [FromRoute] Guid id, CancellationToken cancellationToken) =>
+        await _mediator.Send(new GetAssigneesQuery(id, userId), cancellationToken);
+    
+    [HttpPost("{id:guid}/assignees/{assigneeId:guid}")]
+    public async Task AddAssignee([FromRoute] Guid userId, [FromRoute] Guid id, [FromRoute] Guid assigneeId, CancellationToken cancellationToken) =>
+        await _mediator.Send(new AddAssigneeCommand(id, userId, assigneeId), cancellationToken);
+    
+    [HttpDelete("{id:guid}/assignees/{assigneeId:guid}")]
+    public async Task DeleteAssignee([FromRoute] Guid userId, [FromRoute] Guid id, [FromRoute] Guid assigneeId, CancellationToken cancellationToken) =>
+        await _mediator.Send(new DeleteAssigneeCommand(id, userId, assigneeId), cancellationToken);
+
+    #endregion
 }

@@ -48,7 +48,7 @@ internal sealed class TaskService : ServiceBase, ITaskService
         if (entity is null)
             throw new ContextException($"Task with {id} id does not exist");
         
-        CheckRestrictionsAccess(entity, id, userId);
+        CheckRestrictionsAccess(entity, id, userId, true);
 
         await UnitOfWork.TaskRepository.Value.DeleteAsync(entity, cancellationToken);
         await UnitOfWork.SaveChangesAsync(cancellationToken);
@@ -99,9 +99,70 @@ internal sealed class TaskService : ServiceBase, ITaskService
         return _mapper.Map<IEnumerable<TaskDto>>(entities);
     }
 
-    private void CheckRestrictionsAccess(TaskEntity entity, Guid taskId, Guid userId)
+    public async Task AddAssigneeAsync(Guid id, Guid userId, Guid assigneeId, CancellationToken cancellationToken = default)
     {
-        if (entity.OwnerId != userId || (entity.Assignees.Count > 0 && entity.Assignees.All(u => u.Id != userId)))
+        var entity = await UnitOfWork.TaskRepository.Value.Get(c => c.Id == id && (c.OwnerId == userId || c.Assignees.Any(u => u.Id == userId)), 
+                s => s)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        if (entity is null)
+            throw new ContextException($"Task with {id} id is not found");
+        
+        await UnitOfWork.TaskRepository.Value.LoadNavigationCollectionExplicitly(entity, t => t.Assignees,
+            cancellationToken);
+        
+        var assignee = await UnitOfWork.UserRepository.Value.GetEntityAsync(assigneeId, cancellationToken);
+
+        if (assignee is null)
+            throw new ContextException($"An assignee with {assigneeId} id is not found or you don't have an access to edit it");
+        
+        entity.Assignees.Add(assignee);
+        
+        await UnitOfWork.TaskRepository.Value.UpdateAsync(entity, cancellationToken);
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<UserDto>> GetAssigneesAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var entity = await UnitOfWork.TaskRepository.Value.Get(c => c.Id == id && (c.OwnerId == userId || c.Assignees.Any(u => u.Id == userId)), 
+                s => s)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (entity is null)
+            throw new ContextException($"Task with {id} id is not found or you don't have an access to read it");
+        
+        await UnitOfWork.TaskRepository.Value.LoadNavigationCollectionExplicitly(entity, t => t.Assignees,
+            cancellationToken);
+        
+        return _mapper.Map<IEnumerable<UserDto>>(entity?.Assignees);
+    }
+
+    public async Task DeleteAssigneeAsync(Guid id, Guid userId, Guid assigneeId, CancellationToken cancellationToken = default)
+    {
+        var entity = await UnitOfWork.TaskRepository.Value.Get(c => c.Id == id && (c.OwnerId == userId || c.Assignees.Any(u => u.Id == userId)), 
+                s => s)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        if (entity is null)
+            throw new ContextException($"Task with {id} id is not found or you don't have an access to delete it");
+
+        await UnitOfWork.TaskRepository.Value.LoadNavigationCollectionExplicitly(entity, t => t.Assignees,
+            cancellationToken);
+        
+        var assignee = entity.Assignees.FirstOrDefault(u => u.Id == assigneeId);
+        
+        if (assignee is null)
+            throw new ContextException($"An assignee with {assigneeId} id is not found");
+        
+        entity.Assignees.Remove(assignee);
+        
+        await UnitOfWork.TaskRepository.Value.UpdateAsync(entity, cancellationToken);
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    private static void CheckRestrictionsAccess(TaskEntity entity, Guid taskId, Guid userId, bool deleteAction = false)
+    {
+        if (entity.OwnerId != userId || !deleteAction && (entity.Assignees.Count > 0 && entity.Assignees.All(u => u.Id != userId)))
             throw new ForbiddenException($"User with {userId} id is forbidden to update a Task with {taskId} id");
     }
 }
